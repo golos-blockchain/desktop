@@ -1,0 +1,2 @@
+# desktop
+Golos Desktop Client
