@@ -18,6 +18,7 @@ async function main() {
         await prepareBlogs(branch)
         await prepareMessenger(branch)
         await prepareWallet(branch)
+        console.log('-- Everything is ready.')
     } else {
         const appm = detectAppModule(argv[2])
         if (appm === AppModuleTypes.blogs) {

@@ -1,16 +1,11 @@
 const fs = require('fs')
-const rl = require('readline')
+const rl = require('readline-sync')
 
 const { gitClone } = require('../gitUtils')
 const execEx = require('../execEx')
 
 async function prepareWallet(toolBranch, overwrite = false) {
     console.log('-- PREPARING ui-wallet')
-
-    let branch = toolBranch
-    if (!branch) {
-        branch = rl.question('Cannot detect branch. Which Wallet branch do you need? Example: master ')
-    }
 
     const account = 'golos-blockchain'
     const repo = 'ui-wallet'
@@ -27,6 +22,12 @@ async function prepareWallet(toolBranch, overwrite = false) {
 
     if (clone) {
         console.log('--- Downloading ' + repo + ' from GitHub...')
+
+        let branch = toolBranch
+        if (!branch) {
+            branch = rl.question('Cannot detect branch. Which Wallet branch do you need? Example: master ')
+        }
+
         const res = await gitClone(account, repo, branch)
     }
 
