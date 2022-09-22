@@ -21,6 +21,7 @@ const detectAppModule = (arg) => {
         case 'mssgs':
         case 'mssgr':
         case 'chat':
+            return AppModuleTypes.messenger
         break
         default:
             return
