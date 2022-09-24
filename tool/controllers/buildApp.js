@@ -7,32 +7,6 @@ const buildBlogs = require('./buildBlogs')
 const buildMessenger = require('./buildMessenger')
 const buildWallet = require('./buildWallet')
 
-async function makeConfig(repoBlogs) {
-    let cfg = {}
-    const copyKey = (key) => {
-        cfg[key] = config.get('desktop.' + key)
-    }
-    cfg.app_version = app_version
-    copyKey('hide_comment_neg_rep')
-    copyKey('site_domain')
-    cfg.url_domains = [...config.get('desktop.another_domains')]
-    if (!cfg.url_domains.includes(cfg.site_domain)) {
-        cfg.url_domains.push(cfg.site_domain)
-    }
-    copyKey('ws_connection_app')
-    copyKey('chain_id')
-    copyKey('images')
-    copyKey('auth_service')
-    copyKey('notify_service')
-    copyKey('messenger_service')
-    copyKey('elastic_search')
-    copyKey('apidex_service')
-    copyKey('hidden_assets')
-    copyKey('app_updater')
-    copyKey('forums')
-    fs.writeFileSync('dist/electron/default_cfg.js', 'module.exports = ' + JSON.stringify(cfg, null, 4))
-}
-
 async function copyBuilds(repoBlogs, repoMsgs, repoWallet) {
     console.log('--- Copying Blogs built assets')
 
