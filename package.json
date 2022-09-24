@@ -1,8 +1,47 @@
 {
+  "main": "dist/electron/electron.js",
   "dependencies": {
+    "electron": "17.1.2",
+    "electron-builder": "22.14.13",
     "fs-extra": "^10.1.0",
     "readline-sync": "^1.4.10",
     "simple-git": "^3.14.1",
     "yargs": "^17.5.1"
+  },
+  "build": {
+    "productName": "GOLOS Блоги",
+    "appId": "gls.blogs",
+    "files": [
+      "dist/electron",
+      "!node_modules"
+    ],
+    "win": {
+      "executableName": "glsblogs",
+      "artifactName": "glsblogs-${version}.${ext}",
+      "icon": "electron/icons/256x256.png",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ]
+    },
+    "linux": {
+      "executableName": "glsblogs",
+      "artifactName": "glsblogs-${version}.${ext}",
+      "category": "Finance",
+      "icon": "electron/icons",
+      "target": [
+        "deb"
+      ]
+    },
+    "directories": {
+      "output": "dist/electron-binaries",
+      "buildResources": "electron"
+    },
+    "npmRebuild": false
   }
 }

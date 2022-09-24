@@ -18,6 +18,10 @@ async function buildWallet() {
 
     console.log('-- BUILDING', repo)
 
+    await execEx('npx', ['yarn', 'run', 'build:desktop'], {
+        cwd: repo
+    })
+
     console.log('--- Wallet is built.')
 }
 

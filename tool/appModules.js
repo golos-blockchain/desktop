@@ -2,7 +2,8 @@
 const AppModuleTypes = {
     blogs: 1,
     wallet: 2,
-    messenger: 3
+    messenger: 3,
+    app: 4 // App is a final "package" which includes blogs, wallet and messenger
 }
 
 const detectAppModule = (arg) => {
@@ -22,6 +23,8 @@ const detectAppModule = (arg) => {
         case 'mssgr':
         case 'chat':
             return AppModuleTypes.messenger
+        case 'app':
+            return AppModuleTypes.app
         break
         default:
             return
