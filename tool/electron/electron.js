@@ -7,37 +7,15 @@ const { createContextMenu } = require('./context_menu')
 const { initMenu } = require('./menu')
 const { createSplash } = require('./splash')
 const windowState = require('./state_keeper')
+const initUrls = require('./urls')
 
 const appSet = AppSettings.init()
 
-let site_domain = appSet.site_domain
-try {
-    site_domain = new URL(site_domain).host
-} catch (error) {}
-
-const appUrl = 'app://' + site_domain
-const httpsUrl = 'https://' + site_domain
-
-const isHttpsURL = (url) => {
-    return url.startsWith(httpsUrl)
-}
-const isOwnUrl = (url) => {
-    return isHttpsURL(url) || url.startsWith(appUrl) || isMsgsUrl(url)
-}
-
-let msgsHost
-try {
-    let url = new URL(appSet.messenger_service.host)
-    if (url.protocol === 'app:') {
-        msgsHost = url.host
-    }
-} catch (err) {
-    console.error(err)
-}
-
-const isMsgsUrl = (url) => {
-    return msgsHost && (url.startsWith('https:// ' + msgsHost) || url.startsWith('app://' + msgsHost))
-}
+const {
+    appUrl, httpsUrl, isOwnUrl,
+    msgsHost, isMsgsUrl,
+    walletHost, isWalletUrl
+} = initUrls(appSet)
 
 // events which need to be set for main window and for child windows
 const setCommonWindowEvents = (win) => {
@@ -68,7 +46,7 @@ const setCommonWindowEvents = (win) => {
             shell.openExternal(url)
         } else if (url.startsWith(appUrl + '/leave_page')
                 || url.startsWith(appUrl + '/__app_update')
-                || isMsgsUrl(url)) {
+                || isMsgsUrl(url) || isWalletUrl(url)) {
             let [width, height] = win.getSize()
             width = Math.max(width, 1000)
             height = Math.max(height, 500)
@@ -195,10 +173,13 @@ app.whenReady().then(() => {
                 console.error('onBeforeSendHeaders - cannot get page url')
             } else {
                 const isMsgs = pageUrl.host === msgsHost
+                const isWallet = pageUrl.host === walletHost
                 if (isSecureURL(url)) {
-                    allow(isMsgs ? ('https://' + msgsHost) : httpsUrl)
-                } else if (!isMsgs && isTrustedPage(pageUrl)) {
-                    allow(httpsUrl)
+                    allow(isMsgs ? ('https://' + msgsHost) :
+                        isWallet ? ('https://' + walletHost) :
+                        httpsUrl)
+                } else if (isWallet && isTrustedPage(pageUrl)) {
+                    allow('https://' + walletHost)
                 }
             }
             callback({ requestHeaders })
@@ -211,10 +192,13 @@ app.whenReady().then(() => {
                 console.error('onHeadersReceived - cannot get page url')
             } else {
                 const isMsgs = pageUrl.host === msgsHost
+                const isWallet = pageUrl.host === walletHost
                 if (isSecureURL(url)) {
-                    allow(isMsgs ? ('app://' + msgsHost) : appUrl)
-                } else if (!isMsgs && isTrustedPage(pageUrl)) {
-                    allow(appUrl)
+                    allow(isMsgs ? ('app://' + msgsHost) :
+                        isWallet ? ('app://' + walletHost) :
+                        appUrl)
+                } else if (isWallet && isTrustedPage(pageUrl)) {
+                    allow('app://' + walletHost)
                 }
             }
             callback({ responseHeaders })
@@ -225,15 +209,18 @@ app.whenReady().then(() => {
 
     protocol.registerFileProtocol('app', (request, callback) => {
         const msgs = isMsgsUrl(request.url)
+        const wallet = isWalletUrl(request.url)
         let pn = new URL(request.url).pathname
         if (!pn || pn === '/') {
             pn = '/index.html'
         }
         if (msgs) pn = '/msgs' + pn
+        if (wallet) pn = '/wlt' + pn
         const p = path.normalize(`${__dirname}${pn}`)
         if (!fs.existsSync(p)) {
             pn = '/index.html'
             if (msgs) pn = '/msgs' + pn
+            if (wallet) pn = '/wlt' + pn
             callback({ path: path.normalize(`${__dirname}${pn}`) })
             return
         }

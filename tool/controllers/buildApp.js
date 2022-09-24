@@ -19,10 +19,12 @@ async function copyBuilds(repoBlogs, repoMsgs, repoWallet) {
 
     await fse.copy(msgsBuild, msgsDest, { overwrite: true })
 
-    const wltBuild = repoWallet + '/build'
+    const wltBuild = repoWallet + '/dist/electron'
     const wltDest = 'dist/electron/wlt'
     console.log('--- Copying ' + wltBuild + ' to ' + wltDest)
-    //await fse.copy(wltBuild, wltDest, { overwrite: true })
+    await fse.copy(wltBuild, wltDest, { overwrite: true })
+    fs.copyFileSync(repoBlogs + '/dist/electron/default_cfg.js',
+        wltDest + '/default_cfg.js')
 }
 
 async function buildApp() {
@@ -34,7 +36,7 @@ async function buildApp() {
     }
 
     const repoWallet = 'ui-wallet'
-    if (!fs.existsSync(repoWallet + '/build')) {
+    if (!fs.existsSync(repoWallet + '/dist/electron')) {
         await buildWallet()
     } else {
         console.log('--- Using Wallet which is already built.')
@@ -73,6 +75,7 @@ async function buildApp() {
     fs.copyFileSync('tool/electron/settings_preload.js', 'dist/electron/settings_preload.js')
     fs.copyFileSync('tool/electron/state_keeper.js', 'dist/electron/state_keeper.js')
     fs.copyFileSync('tool/electron/splash.js', 'dist/electron/splash.js')
+    fs.copyFileSync('tool/electron/urls.js', 'dist/electron/urls.js')
     fs.copyFileSync('tool/electron/icons/256x256.png', 'dist/electron/256x256.png')
 
     await copyBuilds(repoBlogs, repoMsgs, repoWallet)
