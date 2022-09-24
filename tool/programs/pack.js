@@ -32,7 +32,9 @@ async function main() {
     console.log('-- PACKAGING APP DISTRIBUTIVE')
 
     await execEx('node', [
-        'node_modules/electron-builder/cli.js'])
+        'node_modules/electron-builder/cli.js'], {
+            shell: true
+        })
 }
 
 module.exports = main

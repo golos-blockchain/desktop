@@ -63,7 +63,8 @@ async function buildApp() {
         'build:app-entry',
         './dist/electron', // these paths are in ui-blogs
         './dist/electron/default_cfg.js'], {
-            cwd: repoBlogs
+            cwd: repoBlogs,
+            shell: true
         })
 
     console.log('--- Copying files')

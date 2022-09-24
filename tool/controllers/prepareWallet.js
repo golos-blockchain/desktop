@@ -33,7 +33,8 @@ async function prepareWallet(toolBranch, overwrite = false) {
 
     console.log('--- Installing dependencies to build Wallet...')
     await execEx('npx', ['yarn', 'install'], {
-        cwd: repo
+        cwd: repo,
+        shell: true
     })
 
     console.log('--- Wallet is ready to build.')

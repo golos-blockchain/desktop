@@ -19,7 +19,8 @@ async function buildWallet() {
     console.log('-- BUILDING', repo)
 
     await execEx('npx', ['yarn', 'run', 'build:app'], {
-        cwd: repo
+        cwd: repo,
+        shell: true
     })
 
     console.log('--- Run utility')
@@ -29,7 +30,8 @@ async function buildWallet() {
         'build:app-entry',
         './dist/electron', // these paths are in ui-wallet
         ], {
-            cwd: repo
+            cwd: repo,
+            shell: true
         })
 
     console.log('--- Wallet is built.')

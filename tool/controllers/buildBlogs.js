@@ -27,7 +27,8 @@ async function buildBlogs() {
     console.log('-- BUILDING', repo)
 
     await execEx('npx', ['yarn', 'run', 'build:app'], {
-        cwd: repo
+        cwd: repo,
+        shell: true
     })
 
     console.log('--- Blogs is built.')

@@ -19,7 +19,8 @@ async function buildMessenger() {
     console.log('-- BUILDING', repo)
 
     await execEx('npx', ['yarn', 'run', 'build:desktop'], {
-        cwd: repo
+        cwd: repo,
+        shell: true
     })
 
     console.log('--- Messenger is built.')

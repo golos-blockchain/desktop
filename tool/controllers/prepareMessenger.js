@@ -33,7 +33,8 @@ async function prepareMessenger(toolBranch, overwrite = false) {
 
     console.log('--- Installing dependencies to build Messenger...')
     await execEx('npx', ['yarn', 'install'], {
-        cwd: repo
+        cwd: repo,
+        shell: true
     })
 
     console.log('--- Messenger is ready to build.')

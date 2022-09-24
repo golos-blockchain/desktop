@@ -34,7 +34,8 @@ async function prepareBlogs(toolBranch, overwrite = false) {
 
     console.log('--- Installing dependencies to build Blogs...')
     await execEx('npx', ['yarn', 'install'], {
-        cwd: repo
+        cwd: repo,
+        shell: true
     })
 
     console.log('--- Blogs is ready to build.')
