@@ -27,29 +27,32 @@ async function copyBuilds(repoBlogs, repoMsgs, repoWallet) {
         wltDest + '/default_cfg.js')
 }
 
-async function buildApp() {
-    const repoMsgs = 'ui-messenger'
-    if (!fs.existsSync(repoMsgs + '/build')) {
-        await buildMessenger()
-    } else {
-        console.log('--- Using Messenger which is already built.')
+async function buildApp(dev = false) {
+    let repoBlogs = 'ui-blogs'
+    let repoMsgs, repoWallet
+    if (!dev) {
+        repoMsgs = 'ui-messenger'
+        if (!fs.existsSync(repoMsgs + '/build')) {
+            await buildMessenger()
+        } else {
+            console.log('--- Using Messenger which is already built.')
+        }
+
+        repoWallet = 'ui-wallet'
+        if (!fs.existsSync(repoWallet + '/dist/electron')) {
+            await buildWallet()
+        } else {
+            console.log('--- Using Wallet which is already built.')
+        }
+
+        if (!fs.existsSync(repoBlogs + '/dist/electron')) {
+            await buildBlogs()
+        } else {
+            console.log('--- Using Blogs which is already built.')
+        }
     }
 
-    const repoWallet = 'ui-wallet'
-    if (!fs.existsSync(repoWallet + '/dist/electron')) {
-        await buildWallet()
-    } else {
-        console.log('--- Using Wallet which is already built.')
-    }
-
-    const repoBlogs = 'ui-blogs'
-    if (!fs.existsSync(repoBlogs + '/dist/electron')) {
-        await buildBlogs()
-    } else {
-        console.log('--- Using Blogs which is already built.')
-    }
-
-    console.log('-- BUILDING ELECTRON APP')
+    console.log('-- BUILDING ELECTRON APP', dev ? '(DEV)' : '')
 
     if (fs.existsSync('dist')) {
         fs.rmSync('dist', { recursive: true, force: true })
@@ -61,8 +64,8 @@ async function buildApp() {
     await execEx('npm', [
         'run',
         'build:app-entry',
-        './dist/electron', // these paths are in ui-blogs
-        './dist/electron/default_cfg.js'], {
+        dev ? 'null' : './dist/electron', // these paths are in ui-blogs
+        dev ? './default_cfg.js' : './dist/electron/default_cfg.js'], {
             cwd: repoBlogs,
             shell: true
         })
@@ -79,7 +82,12 @@ async function buildApp() {
     fs.copyFileSync('tool/electron/urls.js', 'dist/electron/urls.js')
     fs.copyFileSync('tool/electron/icons/256x256.png', 'dist/electron/256x256.png')
 
-    await copyBuilds(repoBlogs, repoMsgs, repoWallet)
+    if (!dev) {
+        await copyBuilds(repoBlogs, repoMsgs, repoWallet)
+    } else {
+        fs.copyFileSync(repoBlogs + '/default_cfg.js',
+            'dist/electron/default_cfg.js')
+    }
 
     console.log('--- Cover is built.')
 }

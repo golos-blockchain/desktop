@@ -85,7 +85,7 @@ const createWindow = () => {
         y: winState.y,
         width: winState.width,
         height: winState.height,
-        show: false,
+        show: true,
         icon: __dirname + '/256x256.png',
         webPreferences: {
             preload: __dirname + '/settings_preload.js'
@@ -158,7 +158,6 @@ app.whenReady().then(() => {
                 url = new URL(url)
                 return url
             } catch (err) {
-                console.error('Cannot get page url', err, url)
                 return null
             }
         }
@@ -207,25 +206,43 @@ app.whenReady().then(() => {
         console.error('CORS bypassing error:', err)
     }
 
-    protocol.registerFileProtocol('app', (request, callback) => {
-        const msgs = isMsgsUrl(request.url)
-        const wallet = isWalletUrl(request.url)
-        let pn = new URL(request.url).pathname
-        if (!pn || pn === '/') {
-            pn = '/index.html'
-        }
-        if (msgs) pn = '/msgs' + pn
-        if (wallet) pn = '/wlt' + pn
-        const p = path.normalize(`${__dirname}${pn}`)
-        if (!fs.existsSync(p)) {
-            pn = '/index.html'
+    if (process.env.DEV) {
+        protocol.registerHttpProtocol('app', (request, callback) => {
+            const msgs = isMsgsUrl(request.url)
+            const wallet = isWalletUrl(request.url)
+            let url0 = new URL(request.url)
+            let url
+            if (msgs) {
+                url = new URL('http://localhost:4020')
+            } else if (wallet) {
+                url = new URL('http://localhost:4030')
+            } else {
+                url = new URL('http://localhost:4010')
+            }
+            url.pathname = url0.pathname
+            callback({ url: url.toString() })
+        })
+    } else {
+        protocol.registerFileProtocol('app', (request, callback) => {
+            const msgs = isMsgsUrl(request.url)
+            const wallet = isWalletUrl(request.url)
+            let pn = new URL(request.url).pathname
+            if (!pn || pn === '/') {
+                pn = '/index.html'
+            }
             if (msgs) pn = '/msgs' + pn
             if (wallet) pn = '/wlt' + pn
-            callback({ path: path.normalize(`${__dirname}${pn}`) })
-            return
-        }
-        callback({ path: p})
-    })
+            const p = path.normalize(`${__dirname}${pn}`)
+            if (!fs.existsSync(p)) {
+                pn = '/index.html'
+                if (msgs) pn = '/msgs' + pn
+                if (wallet) pn = '/wlt' + pn
+                callback({ path: path.normalize(`${__dirname}${pn}`) })
+                return
+            }
+            callback({ path: p})
+        })
+    }
 
     let appMenu = initMenu(appUrl, httpsUrl, appSet, false)
     Menu.setApplicationMenu(appMenu)

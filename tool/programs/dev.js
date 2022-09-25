@@ -1,38 +1,72 @@
 const fs = require('fs')
 
-const buildBlogs = require('../controllers/buildBlogs')
-const buildMessenger = require('../controllers/buildMessenger')
-const buildWallet = require('../controllers/buildWallet')
+const prepareBlogs = require('../controllers/prepareBlogs')
+const devBlogs = require('../controllers/devBlogs')
+const devMessenger = require('../controllers/devMessenger')
+const devWallet = require('../controllers/devWallet')
 const buildApp = require('../controllers/buildApp')
 const execEx = require('../execEx')
 const { AppModuleTypes, detectAppModule} = require('../appModules')
+const { gitBranches } = require('../gitUtils')
+
+let theBranch
+
+async function getBranch() {
+    if (theBranch) return theBranch
+    try {
+        theBranch = (await gitBranches()).current
+        return theBranch
+    } catch (err) {
+        console.error(err)
+        return ''
+    }
+}
 
 async function main() {
-    const argv = process.argv
-    let appm
-    if (argv.length !== 2) {
-        appm = detectAppModule(argv[2])
-        if (appm === AppModuleTypes.messenger) {
-            await buildMessenger()
-        } else if (appm === AppModuleTypes.wallet) {
-            await buildWallet()
-        } else if (appm === AppModuleTypes.blogs) {
-            await buildBlogs()
-        } else if (appm === AppModuleTypes.app) {
-            await buildApp()
-        } else {
-            console.error('Do not know what is ' + argv[2])
-        }
+    const repo = 'ui-blogs'
+    if (!fs.existsSync(repo)) {
+        let branch = await getBranch()
+        await prepareBlogs(branch)
     }
 
-    if (appm !== AppModuleTypes.app) {
-        await buildApp()
-    }
+    await buildApp(true)
 
     console.log('-- RUNNING IN DEV MODE')
 
+    await new Promise(async (resolve, reject) => {
+        let blogsStarted = false, msgsStarted = false, walletStarted = false
+
+        const checkAllStarted = () => {
+            if (blogsStarted && msgsStarted && walletStarted) {
+                resolve()
+            }
+        }
+
+        await devBlogs(() => {
+            blogsStarted = true
+            checkAllStarted()
+        })
+        await devWallet(() => {
+            msgsStarted = true
+            checkAllStarted()
+        })
+        await devMessenger(() => {
+            walletStarted = true
+            checkAllStarted()
+        })
+    })
+
+    console.log('--- Running electron')
+
     await execEx('./node_modules/electron/dist/electron', [
-        '--no-sandbox', '.'])
+        '--no-sandbox', '.'], {
+        color: 'cyan',
+        logTag: '[app]:',
+        env: {
+            ...process.env,
+            DEV: true
+        }
+    })
 }
 
 module.exports = main
