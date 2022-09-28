@@ -1,4 +1,5 @@
 const fs = require('fs')
+const path = require('path')
 
 const prepareBlogs = require('../controllers/prepareBlogs')
 const devBlogs = require('../controllers/devBlogs')
@@ -58,15 +59,35 @@ async function main() {
 
     console.log('--- Running electron')
 
-    await execEx('./node_modules/electron/dist/electron', [
-        '--no-sandbox', '.'], {
-        color: 'cyan',
-        logTag: '[app]:',
-        env: {
-            ...process.env,
-            DEV: true
-        }
-    })
+    let triggered = 0
+
+    const startApp = () => {
+        execEx('./node_modules/electron/dist/electron', [
+            '--no-sandbox', '.'], {
+            color: 'cyan',
+            logTag: '[app]:',
+            env: {
+                ...process.env,
+                DEV: true
+            },
+            onStart: proc => {
+                const el = path.resolve(__dirname, '../electron')
+                const watcher = fs.watch(el, async (eventType, fileName) => {
+                    const now = Date.now()
+                    if (now - triggered < 3000) return
+                    triggered = now
+                    console.log('-- Restarting Electron due to changes...')
+                    watcher.close()
+                    proc.stdin.pause()
+                    proc.kill()
+                    await buildApp(true)
+                    startApp()
+                })
+            }
+        })
+    }
+
+    startApp()
 }
 
 module.exports = main

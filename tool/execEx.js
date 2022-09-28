@@ -6,7 +6,7 @@ const execEx = async (command, args, opts) => {
         chalk = require('chalk')
     } catch (err) {}
 
-    let { logTag, color, onOutput, ...restOpts } = opts
+    let { logTag, color, onStart, onOutput, ...restOpts } = opts
 
     const colorize = (arg, customColor) => {
         customColor = customColor || color
@@ -25,6 +25,9 @@ const execEx = async (command, args, opts) => {
 
     return new Promise((resolve, reject) => {
         const proc = spawn(command, args, restOpts)
+        if (onStart) {
+            onStart(proc)
+        }
         proc.stdout.on('data', (data) => {
             if (onOutput) {
                 const res = onOutput(data, colorize)
