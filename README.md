@@ -1,73 +1,54 @@
 # Десктопное приложение GOLOS
 
+Представляет собой десктопную версию [Golos Blogs](https://github.com/golos-blockchain/ui-blogs), [Golos Wallet](https://github.com/golos-blockchain/ui-wallet) и [Golos Messenger](https://github.com/golos-blockchain/ui-messenger).
+
 Работает на Windows и Linux.
 
 ```js
-git clone https://github.com/golos-blockchain/ui-blogs
+git clone https://github.com/golos-blockchain/desktop
 ```
 
 ### Сборка приложения
 
-Сборка должна осуществляться на каждой ОС в отдельности, то есть на Windows можно собрать GOLOS Блоги для Windows, а на Linux - для Linux.
+Сборка должна осуществляться на каждой ОС в отдельности, то есть на Windows можно собрать GOLOS Desktop для Windows, а на Linux - для Linux.
 
 1. Установите Node.js 16 ([Windows](https://nodejs.org/dist/v16.14.0/node-v16.14.0-x64.msi), [Linux](https://github.com/nodesource/distributions/blob/master/README.md)). В случае Windows тщательно проследите, нет ли в установщике флажка "Добавить Node.js в переменную PATH", и если он есть, то отметьте его.
 
-2. Установите глобальные зависимости:
+2. Скачайте репозиторий с помощью git clone (команда есть выше).
+
+3. Выполните команду:
 ```sh
-npx yarn global add electron@17.1.2 electron-builder@22.14.13
+node prepare
 ```
+Это скачает исходный код Blogs, Wallet и Messenger, а также файл настроек.
 
-3. Скачайте репозиторий с помощью git clone (команда есть выше).
-
-4. В любую папку скачайте репозиторий `ui-messenger` и выполните в нем:
-
-```sh
-npx yarn install
-npx yarn run build:desktop
-```
-
-(настройка файлов конфигурации в ui-messenger не требуется)
-
-5. Скопируйте папку `build` в папку `ui-blogs` и переименуйте в `msgs-build`.
-
-6. Внесите все **настройки** в файле `config/desktop.json`:
+4. Все **настройки** десктопного клиента находятся в файле `desktop/ui-blogs/config/desktop.json`. Проверьте правильность следующих настроек:
 
 - hide_comment_neg_rep
 - site_domain (пример: golos.id то есть основной домен блогов)
 - another_domains (альтернативные домены Блогов, чтобы можно было вставить ссылку с Блогов и она открылась в десктопном клиенте)
 - ws_connection_app (список нод)
 - images
+- wallet_service (app://wallet.golos.id - чтобы использовался встроенный Кошелек)
 - auth_service
 - notify_service
-- messenger_service (app://chat.golos.app - чтобы использовался встроенный мессенджер)
+- messenger_service (app://chat.golos.app - чтобы использовался встроенный Мессенджер)
 - elastic_search
 - apidex_service
 - hidden_assets
 - app_updater
 - forums
 
-7. Установите все зависимости (для сборки).
+5. Теперь можно собрать приложение и запустить его в тестовом режиме командой:
 
 ```sh
-npx yarn install
+node dev
 ```
 
-8. Соберите интерфейс клиента.
+6. Или собрать дистрибутивы приложения:
 
 ```sh
-npx yarn run build:app
-```
-
-9. После сборки интерфейса можно запустить его в тестовом режиме, используя команду:
-
-```sh
-npx yarn run start:app
-```
-
-10. Или собрать дистрибутивы приложения:
-
-```sh
-npx yarn run pack:app
+node pack
 ```
 
 Собранные дистрибутивы будут лежать в папке `dist`.
@@ -78,10 +59,18 @@ npx yarn run pack:app
 
 ### Дополнительно
 
-Существует также возможность быстрой пересборки интерфейса. Если вы внесли изменения только в файлы, находящиеся в папке `electron`, то вместо `yarn run build:app` используйте:
+Команда `node pack` при каждом запуске позволяют учесть изменения, внесенные вами в файл конфигурации (default.json), или же в файлы, находящиеся в папке `tool/electron`. Однако сам код Блогов, Мессенджера и Кошелька эти команды собирают только один раз, но не при изменениях.
 
+Поэтому если вы внесли изменения, например, в Блоги, то вы можете применить их командой
 ```sh
-npx yarn run postbuild:app
+node pack blogs
 ```
 
-И это значительно сэкономит время.
+Или, если вы внесли изменения и в Кошелек и в Блоги, то вы можете выполнить следующие команды:
+```sh
+node build wallet
+node pack blogs
+```
+Первая команда собирает изменения в Кошельке, вторая - собирает изменения в Блогах и упаковывает все вместе в дистрибутив.
+
+Также, помимо `blogs` и `wallet`, возможен вызов этих команд с аргументом `msgs`, что означает Мессенджер.

@@ -1,0 +1,55 @@
+{
+  "name": "Golos.id",
+  "version": "1.3.0",
+  "author": "Golos <info@golos.id>",
+  "description": "Голос Блоги — децентрализованная платформа, работающая на блокчейне Golos.",
+  "license": "MIT",
+  "main": "dist/electron/electron.js",
+  "dependencies": {
+    "chalk": "4.1.2",
+    "fs-extra": "^10.1.0",
+    "readline-sync": "^1.4.10",
+    "simple-git": "^3.14.1",
+    "yargs": "^17.5.1"
+  },
+  "build": {
+    "productName": "GOLOS Блоги",
+    "appId": "gls.blogs",
+    "files": [
+      "dist/electron",
+      "!node_modules"
+    ],
+    "win": {
+      "executableName": "glsblogs",
+      "artifactName": "glsblogs-${version}.${ext}",
+      "icon": "tool/electron/icons/256x256.png",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ]
+    },
+    "linux": {
+      "executableName": "glsblogs",
+      "artifactName": "glsblogs-${version}.${ext}",
+      "category": "Finance",
+      "icon": "tool/electron/icons",
+      "target": [
+        "deb"
+      ]
+    },
+    "directories": {
+      "output": "dist/electron-binaries",
+      "buildResources": "electron"
+    },
+    "npmRebuild": false
+  },
+  "devDependencies": {
+    "electron": "17.1.2",
+    "electron-builder": "22.14.13"
+  }
+}
