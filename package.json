@@ -1,8 +1,8 @@
 {
   "name": "Golos.id",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "author": "Golos <info@golos.id>",
-  "description": "Голос Блоги — децентрализованная платформа, работающая на блокчейне Golos.",
+  "description": "Golos Desktop — десктопное приложение для сервисов на блокчейне GOLOS.",
   "license": "MIT",
   "main": "dist/electron/electron.js",
   "dependencies": {
@@ -13,7 +13,7 @@
     "yargs": "^17.5.1"
   },
   "build": {
-    "productName": "GOLOS Блоги",
+    "productName": "Golos Desktop",
     "appId": "gls.blogs",
     "files": [
       "dist/electron",

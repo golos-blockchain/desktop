@@ -40,7 +40,7 @@ function initMenu(appUrl, httpsUrl, appSet, full = true) {
                     }
                 },
                 {
-                    label: 'GOLOS Blogs ' + appSet.app_version,
+                    label: 'Golos Desktop ' + appSet.app_version,
                     enabled: false,
                 }
             ]
