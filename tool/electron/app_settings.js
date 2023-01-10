@@ -32,6 +32,14 @@ function init() {
     cfg.platform = process.platform
 
     cfg.app_version = defaultCfg.app_version
+    cfg.site_domain = defaultCfg.site_domain
+    cfg.blogs_service = defaultCfg.blogs_service
+    cfg.wallet_service = defaultCfg.wallet_service
+    cfg.messenger_service = defaultCfg.messenger_service
+    cfg.url_domains = defaultCfg.url_domains
+    cfg.forums = defaultCfg.forums
+    cfg.apidex_service = defaultCfg.apidex_service
+    cfg.app_updater = defaultCfg.app_updater
 
     ipcMain.on('get-settings', (e) => {
         e.returnValue = cfg

@@ -13,8 +13,8 @@ const appSet = AppSettings.init()
 
 const {
     appUrl, httpsUrl, isOwnUrl,
-    msgsHost, isMsgsUrl,
-    walletHost, isWalletUrl
+    msgsHost, isMsgsUrl, appMsgsUrl,
+    walletHost, isWalletUrl, appWalletUrl
 } = initUrls(appSet)
 
 // events which need to be set for main window and for child windows
@@ -41,12 +41,23 @@ const setCommonWindowEvents = (win) => {
         }
     })
 
+    const isNewWindow = (url) => {
+        try {
+            const curURL = new URL(win.webContents.getURL())
+            const parsedURL = new URL(url)
+            return parsedURL.host !== curURL.host
+        } catch (err) {
+            console.error('isNewWindow', err)
+            return true
+        }
+    }
+
     win.webContents.setWindowOpenHandler(({ url }) => {
         if (!isOwnUrl(url)) {
             shell.openExternal(url)
         } else if (url.startsWith(appUrl + '/leave_page')
                 || url.startsWith(appUrl + '/__app_update')
-                || isMsgsUrl(url) || isWalletUrl(url)) {
+                || isNewWindow(url)) {
             let [width, height] = win.getSize()
             width = Math.max(width, 1000)
             height = Math.max(height, 500)
@@ -109,7 +120,14 @@ const createWindow = () => {
         winState.saveState(win)
     })
 
-    win.loadURL(appUrl)
+    let mainUrl = appUrl
+    if (appSet.main_app === 'msgs') {
+        mainUrl = appMsgsUrl
+    } else if (appSet.main_app === 'wallet') {
+        mainUrl = appWalletUrl
+    }
+
+    win.loadURL(mainUrl)
 }
 
 ipcMain.on('save-settings', (e, arg) => {

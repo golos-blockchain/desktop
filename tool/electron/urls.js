@@ -30,6 +30,8 @@ module.exports = function initUrls(appSet) {
         return msgsHost && (url.startsWith('https:// ' + msgsHost) || url.startsWith('app://' + msgsHost))
     }
 
+    const appMsgsUrl = 'app://' + msgsHost
+
     let walletHost
     try {
         let url = new URL(appSet.wallet_service.host)
@@ -44,9 +46,11 @@ module.exports = function initUrls(appSet) {
         return walletHost && (url.startsWith('https:// ' + walletHost) || url.startsWith('app://' + walletHost))
     }
 
+    const appWalletUrl = 'app://' + walletHost
+
     return {
         appUrl, httpsUrl, isOwnUrl,
-        msgsHost, isMsgsUrl,
-        walletHost, isWalletUrl
+        msgsHost, isMsgsUrl, appMsgsUrl,
+        walletHost, isWalletUrl, appWalletUrl
     }
 }

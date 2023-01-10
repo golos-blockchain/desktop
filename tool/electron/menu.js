@@ -65,7 +65,7 @@ function initMenu(appUrl, httpsUrl, appSet, full = true) {
                 click: (item, win, e) => {
                     let url = win.webContents.getURL() || ''
                     url = encodeURI(url)
-                    url = url.replace(appUrl, httpsUrl)
+                    url = url.replace('app://', 'https://')
                     const gotoURL = new BrowserWindow({
                         parent: win,
                         modal: true,
@@ -82,7 +82,12 @@ function initMenu(appUrl, httpsUrl, appSet, full = true) {
                         if (isExternal) {
                             shell.openExternal(url)
                         } else {
-                            win.webContents.send('router-push', url)
+                            const curUrl = new URL(win.webContents.getURL())
+                            if (curUrl.host === new URL(url).host) {
+                                win.webContents.send('router-push', url)   
+                            } else {
+                                win.loadURL(url)
+                            }
                         }
                     })
                     createContextMenu(gotoURL)
