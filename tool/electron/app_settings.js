@@ -40,6 +40,7 @@ function init() {
     cfg.forums = defaultCfg.forums
     cfg.apidex_service = defaultCfg.apidex_service
     cfg.app_updater = defaultCfg.app_updater
+    cfg.logo = defaultCfg.logo
 
     ipcMain.on('get-settings', (e) => {
         e.returnValue = cfg

@@ -180,7 +180,7 @@ app.whenReady().then(() => {
             }
         }
         const isTrustedPage = (url) => {
-            return url.pathname.endsWith('/assets')
+            return url.pathname.endsWith('/assets') || url.pathname.startsWith('/convert')
         }
         session.defaultSession.webRequest.onBeforeSendHeaders((details, callback) => {
             const { url, webContents, requestHeaders} = details
