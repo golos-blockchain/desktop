@@ -28,7 +28,7 @@ const setCommonWindowEvents = (win) => {
         } else if (zoomDirection === 'out') {
             zf -= 0.2
         }
-        win.webContents.zoomFactor = zf
+        win.webContents.zoomFactor = Math.max(zf, 0.01)
     })
 
     win.webContents.on('will-navigate', (e, url) => {

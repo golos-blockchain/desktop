@@ -9,6 +9,20 @@ function initMenu(appUrl, httpsUrl, appSet, full = true) {
             role: 'forceReload'
         },
         {
+            label: 'Настройки',
+            submenu: [
+                {
+                    label: 'Увеличить масштаб',
+                    role: 'zoomin',
+                    accelerator: 'CommandOrControl+='
+                },
+                {
+                    label: 'Уменьшить масштаб',
+                    role: 'zoomout',
+                },
+            ]
+        },
+        {
             role: 'help',
             label: 'Помощь',
             submenu: [
@@ -46,7 +60,29 @@ function initMenu(appUrl, httpsUrl, appSet, full = true) {
             ]
         },
     ]
-    if (full)
+    if (full) {
+        const settings = template[1]
+        settings.submenu.push(
+            {
+                type: 'separator'
+            },
+            {
+                label: 'Открыть настройки',
+                click: (item, win, e) => {
+                    const settings = new BrowserWindow({
+                        parent: win,
+                        modal: true,
+                        resizable: false,
+                        width: 600,
+                        height: 475,
+                        webPreferences: {
+                            preload: __dirname + '/settings_preload.js'
+                        }
+                    })
+                    settings.loadURL(appUrl + '/__app_settings')
+                }
+            }
+        )
     	template = [
             {
                 label: '< Назад',
@@ -95,41 +131,10 @@ function initMenu(appUrl, httpsUrl, appSet, full = true) {
                 }
             },
             template[0], // Обновить
-            {
-                label: 'Настройки',
-                submenu: [
-                    {
-                        label: 'Увеличить масштаб',
-                        role: 'zoomin',
-                        accelerator: 'CommandOrControl+='
-                    },
-                    {
-                        label: 'Увеличить масштаб',
-                        role: 'zoomout',
-                    },
-                    {
-                        type: 'separator'
-                    },
-                    {
-                        label: 'Открыть настройки',
-                        click: (item, win, e) => {
-                            const settings = new BrowserWindow({
-                                parent: win,
-                                modal: true,
-                                resizable: false,
-                                width: 600,
-                                height: 475,
-                                webPreferences: {
-                                    preload: __dirname + '/settings_preload.js'
-                                }
-                            })
-                            settings.loadURL(appUrl + '/__app_settings')
-                        }
-                    }
-                ]
-            },
-            template[1], // Помощь
+            settings,
+            template[2], // Помощь
         ]
+    }
     const menu = Menu.buildFromTemplate(template)
     return menu
 }

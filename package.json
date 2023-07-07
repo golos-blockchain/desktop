@@ -49,8 +49,8 @@
     "npmRebuild": false
   },
   "devDependencies": {
-    "electron": "17.1.2",
-    "electron-builder": "22.14.13"
+    "electron": "^25.0.1",
+    "electron-builder": "^23.6.0"
   },
   "scripts": {
     "dev": "electron . --no-sandbox"
