@@ -42,6 +42,10 @@ function init() {
     cfg.app_updater = defaultCfg.app_updater
     cfg.logo = defaultCfg.logo
 
+    if (cfg.notify_service && defaultCfg.notify_service) {
+        cfg.notify_service.host_ws = cfg.notify_service.host_ws || defaultCfg.notify_service.host_ws
+    }
+
     ipcMain.on('get-settings', (e) => {
         e.returnValue = cfg
     })
