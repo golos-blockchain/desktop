@@ -7,6 +7,8 @@ const buildBlogs = require('./buildBlogs')
 const buildMessenger = require('./buildMessenger')
 const buildWallet = require('./buildWallet')
 
+const app_version = require('../../package.json').version
+
 async function copyBuilds(repoBlogs, repoMsgs, repoWallet) {
     console.log('--- Copying Blogs built assets')
 
@@ -29,16 +31,15 @@ async function copyBuilds(repoBlogs, repoMsgs, repoWallet) {
 
 async function buildApp(dev = false) {
     let repoBlogs = 'ui-blogs'
-    let repoMsgs, repoWallet
+    let repoMsgs = 'ui-messenger'
+    let repoWallet = 'ui-wallet'
     if (!dev) {
-        repoMsgs = 'ui-messenger'
         if (!fs.existsSync(repoMsgs + '/build')) {
             await buildMessenger()
         } else {
             console.log('--- Using Messenger which is already built.')
         }
 
-        repoWallet = 'ui-wallet'
         if (!fs.existsSync(repoWallet + '/dist/electron')) {
             await buildWallet()
         } else {
@@ -59,16 +60,31 @@ async function buildApp(dev = false) {
     }
     fs.mkdirSync('dist/electron', { recursive: true })
 
+    console.log('--- Obtaining wallet, messenger versions')
+
+    let walletConfig = fs.readFileSync(repoWallet + '/package.json')
+    walletConfig = JSON.parse(walletConfig)
+    const wallet_version = walletConfig.version
+
+    let msgsConfig = fs.readFileSync(repoMsgs + '/package.json')
+    msgsConfig = JSON.parse(msgsConfig)
+    const msgs_version = msgsConfig.version
+
     console.log('--- Run blogs utility')
 
     await execEx('npm', [
         'run',
         'build:app-entry',
         dev ? 'null' : './dist/electron', // these paths are in ui-blogs
-        dev ? './default_cfg.js' : './dist/electron/default_cfg.js'], {
+        dev ? './default_cfg.js' : './dist/electron/default_cfg.js',
+        app_version,
+        wallet_version,
+        msgs_version], {
             cwd: repoBlogs,
             shell: true
         })
+
+    console.log('--- Adding wallet, messenger versions to config')
 
     console.log('--- Copying files')
 
