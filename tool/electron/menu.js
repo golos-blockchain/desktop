@@ -1,4 +1,4 @@
-const { BrowserWindow, shell, Menu, ipcMain } = require('electron')
+const { BrowserWindow, shell, Menu, ipcMain, dialog } = require('electron')
 
 const { createContextMenu } = require('./context_menu')
 
@@ -54,8 +54,20 @@ function initMenu(appUrl, httpsUrl, appSet, full = true) {
                     }
                 },
                 {
+                    type: 'separator'
+                },
+                {
                     label: 'Golos Desktop ' + appSet.app_version,
-                    enabled: false,
+                    click: () => {
+                        dialog.showMessageBox({
+                            message: 'Golos Desktop ' + appSet.app_version + '\n' +
+                            '\n' +
+                            'Версии модулей:\n' +
+                            '• Блоги - ' + appSet.blogs_version + '\n' +
+                            '• Кошелек - ' + appSet.wallet_version + '\n' +
+                            '• Мессенджер - ' + appSet.msgs_version + '\n'
+                        })
+                    }
                 }
             ]
         },
