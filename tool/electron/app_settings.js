@@ -33,6 +33,7 @@ function init() {
 
     cfg.app_version = defaultCfg.app_version
     cfg.site_domain = defaultCfg.site_domain
+    cfg.ws_connection_exchange = defaultCfg.ws_connection_exchange
     cfg.blogs_service = defaultCfg.blogs_service
     cfg.wallet_service = defaultCfg.wallet_service
     cfg.messenger_service = defaultCfg.messenger_service
