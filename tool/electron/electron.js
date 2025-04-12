@@ -37,7 +37,10 @@ const setCommonWindowEvents = (win) => {
             shell.openExternal(url)
         } else if (url.startsWith('https://')) {
             e.preventDefault()
-            win.loadURL(url.replace('https://', 'app://'))
+            setTimeout(() => {
+                win.loadURL(url.replace('https://', 'app://'))
+            }, 100)
+            // timeout prevents strange crash when open https://golos.id from wallet (UIAs)
         }
     })
 
