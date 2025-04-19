@@ -32,6 +32,9 @@ function init() {
     cfg.platform = process.platform
 
     cfg.app_version = defaultCfg.app_version
+    cfg.blogs_version = defaultCfg.blogs_version
+    cfg.wallet_version = defaultCfg.wallet_version
+    cfg.msgs_version = defaultCfg.msgs_version
     cfg.site_domain = defaultCfg.site_domain
     cfg.ws_connection_exchange = defaultCfg.ws_connection_exchange
     cfg.blogs_service = defaultCfg.blogs_service
