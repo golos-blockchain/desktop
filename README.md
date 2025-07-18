@@ -12,7 +12,7 @@ git clone https://github.com/golos-blockchain/desktop
 
 Сборка должна осуществляться на каждой ОС в отдельности, то есть на Windows можно собрать GOLOS Desktop для Windows, а на Linux - для Linux.
 
-1. Установите Node.js 16 ([Windows](https://nodejs.org/dist/v16.14.0/node-v16.14.0-x64.msi), [Linux](https://github.com/nodesource/distributions/blob/master/README.md)). В случае Windows тщательно проследите, нет ли в установщике флажка "Добавить Node.js в переменную PATH", и если он есть, то отметьте его.
+1. Установите Node.js 20 ([Windows](https://nodejs.org/dist/v20.19.4/node-v20.19.4-x64.msi), [Linux](https://github.com/nodesource/distributions/blob/master/README.md)). В случае Windows тщательно проследите, нет ли в установщике флажка "Добавить Node.js в переменную PATH", и если он есть, то отметьте его.
 
 2. Скачайте репозиторий с помощью git clone (команда есть выше).
 
