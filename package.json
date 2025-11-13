@@ -7,10 +7,10 @@
   "main": "dist/electron/electron.js",
   "dependencies": {
     "chalk": "4.1.2",
-    "fs-extra": "^10.1.0",
+    "fs-extra": "^11.3.2",
     "readline-sync": "^1.4.10",
-    "simple-git": "^3.14.1",
-    "yargs": "^17.5.1"
+    "simple-git": "^3.30.0",
+    "yargs": "^18.0.0"
   },
   "build": {
     "productName": "Golos Desktop",
