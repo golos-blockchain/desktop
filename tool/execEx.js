@@ -3,7 +3,7 @@ const { spawn } = require('child_process')
 const execEx = async (command, args, opts) => {
     let chalk
     try { // Because execEx can be rant from autoInstall when no node_modules present
-        chalk = require('chalk')
+        chalk = require('chalk').default
     } catch (err) {}
 
     let { logTag, color, onStart, onOutput, ...restOpts } = opts
