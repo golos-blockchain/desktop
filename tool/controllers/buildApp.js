@@ -105,6 +105,11 @@ async function buildApp(dev = false) {
             'dist/electron/default_cfg.js')
     }
 
+    // Copy trusted shell last: Blogs can supply its own standalone Electron entry.
+    for (const file of ['app_settings.js', 'context_menu.js', 'electron.js', 'menu.js', 'settings_preload.js', 'state_keeper.js', 'splash.js', 'urls.js']) {
+        fs.copyFileSync('tool/electron/' + file, 'dist/electron/' + file)
+    }
+    await fse.copy('tool/electron/rpc-discovery', 'dist/electron/rpc-discovery', {overwrite: true})
     console.log('--- Cover is built.')
 }
 
