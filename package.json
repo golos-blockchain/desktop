@@ -46,13 +46,29 @@
       "output": "dist/electron-binaries",
       "buildResources": "electron"
     },
-    "npmRebuild": false
+    "npmRebuild": false,
+    "beforePack": "tool/electron/rpc-discovery/before-pack.js",
+    "extraResources": [
+      {
+        "from": "native/rpc-discovery",
+        "to": "rpc-discovery",
+        "filter": [
+          "**/golos-rpc-directory-client",
+          "**/golos-rpc-directory-client.exe",
+          "**/*.dll",
+          "**/*.so*",
+          "**/provenance.json",
+          "**/LICENSE*"
+        ]
+      }
+    ]
   },
   "devDependencies": {
     "electron": "^39.1.2",
     "electron-builder": "^26.0.12"
   },
   "scripts": {
-    "dev": "electron . --no-sandbox"
+    "dev": "electron . --no-sandbox",
+    "test:discovery": "node --test tests/*.test.js"
   }
 }

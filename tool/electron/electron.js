@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, protocol, session, shell, ipcMain } = require('electron')
+const { app, BrowserWindow, Menu, protocol, session, shell, ipcMain, dialog } = require('electron')
 const path = require('path')
 const fs = require('fs')
 
@@ -133,11 +133,8 @@ const createWindow = () => {
     win.loadURL(mainUrl)
 }
 
-ipcMain.on('save-settings', (e, arg) => {
-    AppSettings.saveSettings(arg)
-    app.relaunch()
-    app.exit()
-})
+const settings = require('./rpc-discovery/settings-owner').installSettings({BrowserWindow, ipcMain}, {appUrl, cfg: appSet, save: AppSettings.saveSettings, restart: () => {app.relaunch(); app.exit();}})
+require('./rpc-discovery/electron').installDiscovery({app, BrowserWindow, ipcMain, dialog}, {resourcesPath: process.resourcesPath, appUrl, settings})
 
 const upsertHeader = (headers, key, val) => {
     const lowKey = key.toLowerCase()

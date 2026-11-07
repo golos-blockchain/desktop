@@ -1,12 +1,12 @@
 const { app, contextBridge, ipcRenderer } = require('electron')
 
+contextBridge.exposeInMainWorld('rpcDiscoveryPanel', {open: () => ipcRenderer.send('rpc-discovery:open')})
+
 contextBridge.exposeInMainWorld('appSettings', {
     load: () => {
         return ipcRenderer.sendSync('get-settings')
     },
-    save: (settings) => {
-        ipcRenderer.send('save-settings', settings)
-    }
+    open: () => ipcRenderer.send('owned-settings:open')
 })
 
 contextBridge.exposeInMainWorld('appSplash', {

@@ -75,23 +75,14 @@ function initMenu(appUrl, httpsUrl, appSet, full = true) {
     if (full) {
         const settings = template[1]
         settings.submenu.push(
+            {label: 'Найти RPC через P2P', click: () => require('./rpc-discovery/electron').openDiscovery()},
             {
                 type: 'separator'
             },
             {
                 label: 'Открыть настройки',
                 click: (item, win, e) => {
-                    const settings = new BrowserWindow({
-                        parent: win,
-                        modal: true,
-                        resizable: false,
-                        width: 600,
-                        height: 475,
-                        webPreferences: {
-                            preload: __dirname + '/settings_preload.js'
-                        }
-                    })
-                    settings.loadURL(appUrl + '/__app_settings')
+                    require('./rpc-discovery/settings-owner').openSettings()
                 }
             }
         )
